@@ -1,21 +1,88 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import '../config/api_config.dart';
 
-class PopularList extends StatelessWidget {
+// 전역 상태 관리 클래스
+class PopularListData {
+  static final PopularListData _instance = PopularListData._internal();
+  factory PopularListData() => _instance;
+  PopularListData._internal();
+
+  List<Map<String, dynamic>> artists = [];
+  bool isLoading = true;
+  String? errorMessage;
+  bool hasLoaded = false; // 이미 로드되었는지 확인
+
+  Future<void> fetchPopularArtists() async {
+    if (hasLoaded && artists.isNotEmpty) {
+      isLoading = false;
+      return; // 이미 로드된 데이터가 있으면 API 호출하지 않음
+    }
+
+    try {
+      // 환경 정보 출력 (디버깅용)
+      ApiConfig.printEnvironment();
+      
+      // Next.js 서버의 API 엔드포인트 호출
+      final response = await http.get(
+        Uri.parse(ApiConfig.popularArtists),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['success'] == true) {
+          artists = List<Map<String, dynamic>>.from(data['artists']);
+          isLoading = false;
+          hasLoaded = true; // 로드 완료 표시
+        } else {
+          errorMessage = data['error'] ?? '데이터를 가져오는데 실패했습니다.';
+          isLoading = false;
+        }
+      } else {
+        errorMessage = '서버 오류: ${response.statusCode}';
+        isLoading = false;
+      }
+    } catch (e) {
+      errorMessage = '네트워크 오류: $e';
+      isLoading = false;
+    }
+  }
+
+  void reset() {
+    artists = [];
+    isLoading = true;
+    errorMessage = null;
+    hasLoaded = false;
+  }
+}
+
+class PopularList extends StatefulWidget {
   const PopularList({super.key});
 
-  // K-pop 가수 TOP 10 리스트
-  final List<Map<String, dynamic>> kpopArtists = const [
-    {'rank': 1, 'name': 'BTS', 'group': '방탄소년단', 'color': Color(0xFF6B46C1)},
-    {'rank': 2, 'name': 'BLACKPINK', 'group': '블랙핑크', 'color': Color(0xFF000000)},
-    {'rank': 3, 'name': 'Stray Kids', 'group': '스트레이 키즈', 'color': Color(0xFF1E40AF)},
-    {'rank': 4, 'name': 'NewJeans', 'group': '뉴진스', 'color': Color(0xFF059669)},
-    {'rank': 5, 'name': 'SEVENTEEN', 'group': '세븐틴', 'color': Color(0xFFDC2626)},
-    {'rank': 6, 'name': '아이브', 'group': 'IVE', 'color': Color(0xFF7C3AED)},
-    {'rank': 7, 'name': 'TWICE', 'group': '트와이스', 'color': Color(0xFFEC4899)},
-    {'rank': 8, 'name': '에스파', 'group': 'aespa', 'color': Color(0xFF06B6D4)},
-    {'rank': 9, 'name': '르세라핌', 'group': 'LE SSERAFIM', 'color': Color(0xFFF59E0B)},
-    {'rank': 10, 'name': '베이몬스터', 'group': 'BAEMON', 'color': Color(0xFF8B5CF6)},
-  ];
+  @override
+  State<PopularList> createState() => _PopularListState();
+}
+
+class _PopularListState extends State<PopularList> {
+  final PopularListData _data = PopularListData();
+
+  @override
+  void initState() {
+    super.initState();
+    _data.fetchPopularArtists().then((_) {
+      if (mounted) setState(() {});
+    });
+  }
+
+  Color _getColorFromHex(String hexColor) {
+    try {
+      return Color(int.parse(hexColor.replaceAll('#', '0xFF')));
+    } catch (e) {
+      return const Color(0xFF6B46C1); // 기본 색상
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,20 +99,50 @@ class PopularList extends StatelessWidget {
               color: Colors.white,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 7),
           Expanded(
-            child: ListView.builder(
-              itemCount: kpopArtists.length,
-              itemBuilder: (context, index) {
-                final artist = kpopArtists[index];
-                return Top10ArtistItem(
-                  rank: artist['rank'] as int,
-                  name: artist['name'] as String,
-                  group: artist['group'] as String,
-                  color: artist['color'] as Color,
-                );
-              },
-            ),
+            child: _data.isLoading
+                ? const Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                    ),
+                  )
+                : _data.errorMessage != null
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              _data.errorMessage!,
+                              style: const TextStyle(
+                                color: Colors.red,
+                                fontSize: 14,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 16),
+                            ElevatedButton(
+                              onPressed: () async {
+                                await _data.fetchPopularArtists();
+                                if (mounted) setState(() {});
+                              },
+                              child: const Text('다시 시도'),
+                            ),
+                          ],
+                        ),
+                      )
+                    : ListView.builder(
+                        itemCount: _data.artists.length,
+                        itemBuilder: (context, index) {
+                          final artist = _data.artists[index];
+                          return Top10ArtistItem(
+                            rank: artist['rank'] as int,
+                            name: artist['artist_name_en'] as String,
+                            group: artist['artist_name_kr'] as String? ?? '',
+                            color: _getColorFromHex(artist['color_code'] as String? ?? '#6B46C1'),
+                          );
+                        },
+                      ),
           ),
         ],
       ),

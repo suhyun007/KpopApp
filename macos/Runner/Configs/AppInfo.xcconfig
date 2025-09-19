@@ -8,7 +8,7 @@
 PRODUCT_NAME = K-popCall
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.K-popcall.app.K-popCall
+PRODUCT_BUNDLE_IDENTIFIER = com.kpopcall.app.kpopapp
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2025 com.K-popcall.app. All rights reserved.

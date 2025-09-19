@@ -1,0 +1,62 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+app_store_connect_api_key(
+  key_id: "CSJR8WL7PV",
+  issuer_id: "668cdf46-2d91-4d80-92ca-c63727a99a61",
+  key_filepath: "/Users/admin/Projects/MyApp/keys/AuthKey_CSJR8WL7PV.p8"
+)
+
+default_platform(:ios)
+
+platform :ios do
+  desc "Push a new release build to the App Store"
+  lane :release do
+    increment_build_number(xcodeproj: "Runner.xcodeproj")
+    
+    # Build app with dSYM generation
+    build_app(
+      workspace: "Runner.xcworkspace", 
+      scheme: "Runner",
+      export_method: "app-store",
+      xcargs: "-allowProvisioningUpdates",
+      export_options: {
+        method: "app-store",
+        uploadBitcode: false,
+        uploadSymbols: true,
+        compileBitcode: false
+      }
+    )
+    
+    # Upload dSYM to Crashlytics
+    # upload_symbols_to_crashlytics(
+    #  gsp_path: "Runner/GoogleService-Info.plist"
+    # )
+    
+    upload_to_app_store(
+  	skip_metadata: true,
+  	skip_screenshots: true,
+  	skip_app_version_update: true,
+  	precheck_include_in_app_purchases: false
+   	)
+  end
+  
+  desc "Build and upload dSYM to Crashlytics"
+  lane :upload_dsym do
+    # upload_symbols_to_crashlytics(
+    #  gsp_path: "Runner/GoogleService-Info.plist"
+    #)
+  end
+end

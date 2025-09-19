@@ -6,12 +6,11 @@ class ComingSoon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      //height: 280, // 고정 높이 (제목 + 3개 카드 + 간격)
       padding: const EdgeInsets.all(16),
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 고정 제목
           const Text(
             'COMING SOON',
             style: TextStyle(
@@ -20,9 +19,12 @@ class ComingSoon extends StatelessWidget {
               color: Colors.white,
             ),
           ),
-          const SizedBox(height: 16),
-          Column(
-            children: [
+          const SizedBox(height: 7),
+          // 스크롤 가능한 카드들
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
               SizedBox(
                 height:72,
                 child: ComingSoonCard(
@@ -67,10 +69,11 @@ class ComingSoon extends StatelessWidget {
                   color: Colors.green,
                 ),
               ),
-            ],
+                ],
+              ),
+            ),
           ),
         ],
-        ),
       ),
     );
   }

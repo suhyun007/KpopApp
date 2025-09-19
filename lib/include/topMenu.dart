@@ -18,7 +18,7 @@ class TopMenu extends StatelessWidget implements PreferredSizeWidget {
         children: [
           // 로고
           const Text(
-            'K-pop call',
+            'Kpop call',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               color: Colors.white,

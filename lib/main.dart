@@ -5,6 +5,7 @@ import 'include/comingSoon.dart';
 import 'screens/artistsScreen.dart';
 import 'screens/mapScreen.dart';
 import 'screens/myScreen.dart';
+import 'screens/artistDetailScreen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,13 +17,19 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'K-Pop Call',
+      title: 'Kpop Call',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.purple),
         useMaterial3: true,
       ),
       home: const MainScreen(),
+      routes: {
+        '/artist-detail': (context) {
+          final artistName = ModalRoute.of(context)!.settings.arguments as String;
+          return ArtistDetailScreen(artistName: artistName);
+        },
+      },
     );
   }
 }
@@ -95,13 +102,14 @@ class HomeContent extends StatelessWidget {
             Container(
               //width: double.infinity,
               width: 420,
-              height: 200,
-              margin: const EdgeInsets.all(16),
+              height: 150,
+              margin: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
-                image: const DecorationImage(
+                image: DecorationImage(
                   image: AssetImage('image/bg/main.png'),
                   fit: BoxFit.cover, // 이미지가 컨테이너를 꽉 채움
+                  opacity: 0.5, // 배경 이미지 투명도 30% 감소
                 ),
               ),
               child: Container(
@@ -117,21 +125,63 @@ class HomeContent extends StatelessWidget {
                   ),
                 ),
                 child: const Center(
-                  child: Text(
-                    'BTS CONCERT\nD-5',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      shadows: [
-                        Shadow(
-                          offset: Offset(1, 1),
-                          blurRadius: 3,
-                          color: Colors.black54,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'BTS CONCERT',
+                        style: TextStyle(
+                          fontSize: 23,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white,
+                          shadows: [
+                            Shadow(
+                              offset: Offset(3, 3),
+                              blurRadius: 6,
+                              color: Colors.black,
+                            ),
+                            Shadow(
+                              offset: Offset(2, 2),
+                              blurRadius: 4,
+                              color: Colors.black,
+                            ),
+                            Shadow(
+                              offset: Offset(1, 1),
+                              blurRadius: 2,
+                              color: Colors.black,
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    textAlign: TextAlign.center,
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: 5),
+                      Text(
+                        'D-5',
+                        style: TextStyle(
+                          fontSize: 38,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,
+                          shadows: [
+                            Shadow(
+                              offset: Offset(3, 3),
+                              blurRadius: 6,
+                              color: Colors.black,
+                            ),
+                            Shadow(
+                              offset: Offset(2, 2),
+                              blurRadius: 4,
+                              color: Colors.black,
+                            ),
+                            Shadow(
+                              offset: Offset(1, 1),
+                              blurRadius: 2,
+                              color: Colors.black,
+                            ),
+                          ],
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
                   ),
                 ),
               ),
