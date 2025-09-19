@@ -3,13 +3,15 @@ import 'package:flutter/foundation.dart';
 class ApiConfig {
   // 환경에 따른 API URL 설정
   static String get baseUrl {
-    if (kDebugMode) {
-      // 로컬 개발 환경
-      return 'http://localhost:3000';
-    } else {
-      // 배포 환경 (Vercel)
-      return 'https://kpop-server.vercel.app';
-    }
+    // 테스트를 위해 강제로 로컬 서버 사용 (포트 3002)
+    //return 'https://kpop-server-lilac.vercel.app/';
+     if (kDebugMode) {
+       // 로컬 개발 환경
+       return 'http://localhost:3000/';  // 포트 3002로 변경
+     } else {
+       // 배포 환경 (Vercel)
+       return 'https://kpop-server-lilac.vercel.app/';
+     }
   }
   
   // API 엔드포인트들
