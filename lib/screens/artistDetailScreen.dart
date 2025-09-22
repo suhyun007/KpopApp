@@ -6,10 +6,12 @@ import '../config/api_config.dart';
 
 class ArtistDetailScreen extends StatefulWidget {
   final String artistName;
+  final int? artistId; // 아티스트 ID 추가
 
   const ArtistDetailScreen({
     super.key,
     required this.artistName,
+    this.artistId, // 선택적 매개변수
   });
 
   @override
@@ -31,7 +33,6 @@ class _ArtistDetailScreenState extends State<ArtistDetailScreen> {
     super.initState();
     _detectSystemLanguage();
     _fetchArtistDetail();
-    _fetchConcerts();
   }
 
   void _detectSystemLanguage() {
@@ -63,8 +64,18 @@ class _ArtistDetailScreenState extends State<ArtistDetailScreen> {
 
   Future<void> _fetchArtistDetail() async {
     try {
+      // artistId가 있으면 ID로 조회, 없으면 이름으로 조회 (fallback)
+      String apiUrl;
+      if (widget.artistId != null) {
+        apiUrl = ApiConfig.getArtistDetailById(widget.artistId!);
+        print('🎯 아티스트 상세 조회 (ID): ${widget.artistId}');
+      } else {
+        apiUrl = ApiConfig.getArtistDetailByName(widget.artistName);
+        print('⚠️ 아티스트 상세 조회 (이름 fallback): ${widget.artistName}');
+      }
+      
       final response = await http.get(
-        Uri.parse(ApiConfig.getArtistDetailByName(widget.artistName)),
+        Uri.parse(apiUrl),
         headers: {'Content-Type': 'application/json'},
       );
 
@@ -72,7 +83,15 @@ class _ArtistDetailScreenState extends State<ArtistDetailScreen> {
         final data = json.decode(response.body);
         if (data['success'] == true) {
           setState(() {
-            artistData = data['artist'];
+            // API 응답에서 artists 배열의 첫 번째 요소를 가져옴
+            final artists = data['artists'] as List<dynamic>?;
+            if (artists != null && artists.isNotEmpty) {
+              artistData = artists.first as Map<String, dynamic>;
+              // 아티스트 정보 로드 후 콘서트 정보 조회
+              _fetchConcerts();
+            } else {
+              artistData = null;
+            }
             isLoading = false;
           });
         } else {
@@ -126,8 +145,16 @@ class _ArtistDetailScreenState extends State<ArtistDetailScreen> {
     });
 
     try {
+      // artist_id가 있으면 ID로 조회, 없으면 이름으로 조회
+      String apiUrl;
+      if (artistData != null && artistData!['id'] != null) {
+        apiUrl = ApiConfig.getConcertsByArtistId(artistData!['id']);
+      } else {
+        apiUrl = ApiConfig.getConcertsByArtist(widget.artistName);
+      }
+      
       final response = await http.get(
-        Uri.parse(ApiConfig.getConcertsByArtist(widget.artistName)),
+        Uri.parse(apiUrl),
         headers: {'Content-Type': 'application/json'},
       );
 
@@ -404,7 +431,7 @@ class _ArtistDetailScreenState extends State<ArtistDetailScreen> {
 
   String _getArtistDescription() {
     if (artistData == null) {
-      return '아티스트 정보를 불러오는 중입니다...';
+      return '...';
     }
 
     // artist_translations 테이블에서 현재 언어의 description 찾기
@@ -502,12 +529,6 @@ class _ArtistDetailScreenState extends State<ArtistDetailScreen> {
         ),
         child: Column(
           children: [
-            Icon(
-              Icons.event_busy,
-              color: Colors.grey[400],
-              size: 32,
-            ),
-            const SizedBox(height: 8),
             Text(
               'No upcoming concerts scheduled',
               style: TextStyle(

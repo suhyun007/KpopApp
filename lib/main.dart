@@ -7,6 +7,7 @@ import 'screens/artistsScreen.dart';
 import 'screens/mapScreen.dart';
 import 'screens/myScreen.dart';
 import 'screens/artistDetailScreen.dart';
+import 'screens/concertDetailScreen.dart';
 import 'screens/splashScreen.dart';
 
 void main() {
@@ -29,8 +30,21 @@ class MyApp extends StatelessWidget {
       routes: {
         '/main': (context) => const MainScreen(),
         '/artist-detail': (context) {
-          final artistName = ModalRoute.of(context)!.settings.arguments as String;
-          return ArtistDetailScreen(artistName: artistName);
+          final args = ModalRoute.of(context)!.settings.arguments;
+          if (args is Map<String, dynamic>) {
+            // ID와 이름이 모두 있는 경우
+            return ArtistDetailScreen(
+              artistName: args['artistName'] as String,
+              artistId: args['artistId'] as int?,
+            );
+          } else {
+            // 이름만 있는 경우 (하위 호환성)
+            return ArtistDetailScreen(artistName: args as String);
+          }
+        },
+        '/concert-detail': (context) {
+          final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+          return ConcertDetailScreen(concert: args['concert']);
         },
       },
     );

@@ -136,10 +136,11 @@ class _PopularListState extends State<PopularList> {
                         itemBuilder: (context, index) {
                           final artist = _data.artists[index];
                           return Top10ArtistItem(
-                            rank: artist['rank'] as int,
-                            name: artist['artist_name_en'] as String,
+                            rank: artist['rank'] as int? ?? 0,
+                            name: artist['artist_name_en'] as String? ?? '',
                             group: artist['artist_name_kr'] as String? ?? '',
                             color: _getColorFromHex(artist['color_code'] as String? ?? '#6B46C1'),
+                            artistId: artist['id'] as int? ?? 0,
                           );
                         },
                       ),
@@ -156,6 +157,7 @@ class Top10ArtistItem extends StatelessWidget {
   final String name;
   final String group;
   final Color color;
+  final int artistId; // 아티스트 ID 추가
 
   const Top10ArtistItem({
     super.key,
@@ -163,6 +165,7 @@ class Top10ArtistItem extends StatelessWidget {
     required this.name,
     required this.group,
     required this.color,
+    required this.artistId, // 아티스트 ID 추가
   });
 
   @override
@@ -172,7 +175,10 @@ class Top10ArtistItem extends StatelessWidget {
         Navigator.pushNamed(
           context,
           '/artist-detail',
-          arguments: name,
+          arguments: {
+            'artistName': name,
+            'artistId': artistId,
+          },
         );
       },
       child: Container(

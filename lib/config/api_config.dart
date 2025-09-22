@@ -59,10 +59,16 @@ class ApiConfig {
   static String get artistDetail => '$baseUrlForMobile/api/artists';
   static String get concerts => '$baseUrlForMobile/api/concerts';
   
+  // 아티스트 상세 정보 조회 (ID로)
+  static String getArtistDetailById(int artistId) => '$baseUrlForMobile/api/artists?id=$artistId';
+  
   // 아티스트 상세 정보 조회 (이름으로)
   static String getArtistDetailByName(String artistName) => '$baseUrlForMobile/api/artists?name=$artistName';
   
-  // 아티스트별 콘서트 정보 조회
+  // 아티스트별 콘서트 정보 조회 (ID로)
+  static String getConcertsByArtistId(int artistId) => '$baseUrlForMobile/api/concerts?artist_id=$artistId';
+  
+  // 아티스트별 콘서트 정보 조회 (이름으로)
   static String getConcertsByArtist(String artistName) => '$baseUrlForMobile/api/concerts?artist=$artistName';
   
   // 환경 정보 출력 (디버깅용)

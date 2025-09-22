@@ -136,8 +136,10 @@ class _ComingSoonState extends State<ComingSoon> {
                                       onTap: () {
                                         Navigator.pushNamed(
                                           context,
-                                          '/artist-detail',
-                                          arguments: concert['artist_name_en'] ?? '',
+                                          '/concert-detail',
+                                          arguments: {
+                                            'concert': concert,
+                                          },
                                         );
                                       },
                                       child: ComingSoonCard(

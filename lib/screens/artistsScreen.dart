@@ -10,28 +10,45 @@ class ArtistsData {
   ArtistsData._internal();
 
   List<Map<String, dynamic>> artists = [];
-  bool isLoading = true;
+  bool isLoading = false;
+  bool isLoadingMore = false;
   String? errorMessage;
-  bool hasLoaded = false; // 이미 로드되었는지 확인
+  int currentPage = 1;
+  int limit = 10;
+  bool hasMoreData = true;
 
-  Future<void> fetchArtists() async {
-    if (hasLoaded && artists.isNotEmpty) {
-      isLoading = false;
-      return; // 이미 로드된 데이터가 있으면 API 호출하지 않음
+  Future<void> fetchArtists({bool isRefresh = false}) async {
+    if (isRefresh) {
+      currentPage = 1;
+      artists = [];
+      hasMoreData = true;
     }
+
+    if (isLoading || !hasMoreData) return;
+
+    isLoading = true;
+    errorMessage = null;
 
     try {
       final response = await http.get(
-        Uri.parse(ApiConfig.artistDetail),
+        Uri.parse('${ApiConfig.artistDetail}?search=true&page=$currentPage&limit=$limit'),
         headers: {'Content-Type': 'application/json'},
       );
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         if (data['success'] == true) {
-          artists = List<Map<String, dynamic>>.from(data['artists'] ?? []);
+          final newArtists = List<Map<String, dynamic>>.from(data['artists'] ?? []);
+          
+          if (isRefresh) {
+            artists = newArtists;
+          } else {
+            artists.addAll(newArtists);
+          }
+          
+          currentPage++;
+          hasMoreData = newArtists.length == limit;
           isLoading = false;
-          hasLoaded = true; // 로드 완료 표시
         } else {
           errorMessage = data['error'] ?? '데이터를 불러올 수 없습니다.';
           isLoading = false;
@@ -46,12 +63,46 @@ class ArtistsData {
     }
   }
 
+  Future<void> loadMoreArtists() async {
+    if (isLoadingMore || !hasMoreData) return;
+
+    isLoadingMore = true;
+
+    try {
+      final response = await http.get(
+        Uri.parse('${ApiConfig.artistDetail}?search=true&page=$currentPage&limit=$limit'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['success'] == true) {
+          final newArtists = List<Map<String, dynamic>>.from(data['artists'] ?? []);
+          
+          artists.addAll(newArtists);
+          currentPage++;
+          hasMoreData = newArtists.length == limit;
+          isLoadingMore = false;
+        } else {
+          isLoadingMore = false;
+        }
+      } else {
+        isLoadingMore = false;
+      }
+    } catch (e) {
+      isLoadingMore = false;
+    }
+  }
+
   void reset() {
     artists = [];
-    isLoading = true;
+    isLoading = false;
+    isLoadingMore = false;
     errorMessage = null;
-    hasLoaded = false;
+    currentPage = 1;
+    hasMoreData = true;
   }
+
 }
 
 class ArtistsScreen extends StatefulWidget {
@@ -72,120 +123,79 @@ class _ArtistsScreenState extends State<ArtistsScreen> {
     });
   }
 
-
-  Color _getColorFromHex(String hexColor) {
-    try {
-      return Color(int.parse(hexColor.replaceAll('#', '0xFF')));
-    } catch (e) {
-      return const Color(0xFFE6C767); // 기본 색상
-    }
-  }
-
-  String _getArtistShortDescription(String artistName) {
-    switch (artistName.toUpperCase()) {
-      case 'BTS':
-        return '한국을 대표하는 글로벌 보이그룹. 희망과 도전의 메시지를 전달하며 시대적 아이콘으로 자리잡았습니다.';
-      case 'STRAY KIDS':
-        return '강렬한 사운드와 자작곡 중심의 음악으로 주목받는 8인조 보이그룹. 차세대 K-POP을 대표하는 글로벌 아티스트입니다.';
-      case 'NEWJEANS':
-        return '신선한 음악과 자연스러운 콘셉트로 주목받는 5인조 걸그룹. K-POP의 새로운 흐름을 만들어가는 그룹입니다.';
-      case 'SEVENTEEN':
-        return '자체 프로듀싱 아이돌로 알려진 13명의 멤버로 구성된 보이그룹. 퍼포먼스, 보컬, 힙합 팀으로 나뉘어 다양한 매력을 보여줍니다.';
-      case 'IVE':
-        return '고급스럽고 세련된 콘셉트로 주목받는 6인조 걸그룹. 글로벌 음악 시장에서 두각을 드러내는 차세대 대표 그룹입니다.';
-      case 'AESPA':
-        return '현실과 가상 세계를 연결하는 독창적인 콘셉트로 주목받는 4인조 걸그룹. 혁신적인 아이디어로 글로벌 팬덤을 확장해가는 그룹입니다.';
-      case 'TWICE':
-        return '밝고 긍정적인 에너지로 사랑받는 대표 걸그룹. 활발한 해외 활동을 통해 글로벌 팬덤을 구축해왔습니다.';
-      case 'LE SSERAFIM':
-        return '자신감 넘치는 태도와 강렬한 메시지로 주목받는 5인조 걸그룹. 두려움 없는 매력으로 K-POP을 이끌어가는 팀입니다.';
-      case 'BABYMONSTER':
-        return '강력한 보컬과 랩 실력을 겸비한 7인조 걸그룹. 차세대 글로벌 걸그룹으로 주목받고 있습니다.';
-      case 'NCT 127':
-        return '실험적인 음악과 독창적인 퍼포먼스로 주목받는 9인조 보이그룹. 혁신적인 K-POP의 가능성을 보여주고 있습니다.';
-      case 'ITZY':
-        return '당당하고 자유로운 매력으로 사랑받는 5인조 걸그룹. 차세대 걸그룹으로 글로벌 시장에서 존재감을 키워가고 있습니다.';
-      case 'ENHYPEN':
-        return '몰입도 높은 세계관과 스토리텔링으로 팬들을 사로잡는 7인조 그룹. 새로운 세대의 K-POP 대표 그룹입니다.';
-      case 'EXO':
-        return '강렬한 퍼포먼스와 탄탄한 보컬 실력으로 인정받는 9인조 보이그룹. K-POP의 한 시대를 대표한 그룹입니다.';
-      case 'RED VELVET':
-        return '다채로운 콘셉트와 넓은 음악 스펙트럼을 보여주는 5인조 걸그룹. K-POP만의 다양성을 잘 보여주는 그룹입니다.';
-      case 'TXT':
-        return '청춘의 성장과 감정을 진솔하게 담아내는 5인조 보이그룹. 차세대 K-POP을 이끄는 대표적인 청춘 아이콘입니다.';
-      case '(G)I-DLE':
-        return '자작곡과 창의적인 콘셉트로 주목받는 5인조 걸그룹. K-POP 안에서 독보적인 위치를 차지하고 있습니다.';
-      case 'SHINEE':
-        return '실험적인 음악과 세련된 퍼포먼스로 오랜 시간 사랑받는 5인조 그룹. 자신들만의 음악 세계를 구축한 롱런 아티스트입니다.';
-      default:
-        return 'K-POP의 다양한 매력과 색깔을 보여주는 아티스트입니다.';
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
       color: Colors.black,
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 로딩 상태
-            if (_data.isLoading)
-              const Center(
-                child: Padding(
-                  padding: EdgeInsets.all(50),
-                  child: CircularProgressIndicator(
-                    color: Color(0xFFE6C767),
-                  ),
+      child: RefreshIndicator(
+        onRefresh: () async {
+          await _data.fetchArtists(isRefresh: true);
+          if (mounted) setState(() {});
+        },
+        color: const Color(0xFFE6C767),
+        child: _data.isLoading && _data.artists.isEmpty
+            ? const Center(
+                child: CircularProgressIndicator(
+                  color: Color(0xFFE6C767),
                 ),
               )
-            // 에러 상태
-            else if (_data.errorMessage != null)
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(50),
-                  child: Column(
-                    children: [
-                      Text(
-                        _data.errorMessage!,
-                        style: const TextStyle(
-                          color: Colors.red,
-                          fontSize: 14,
+            : _data.errorMessage != null && _data.artists.isEmpty
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          _data.errorMessage!,
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 14,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: () async {
-                          await _data.fetchArtists();
-                          if (mounted) setState(() {});
-                        },
-                        child: const Text('다시 시도'),
-                      ),
-                    ],
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () async {
+                            await _data.fetchArtists(isRefresh: true);
+                            if (mounted) setState(() {});
+                          },
+                          child: const Text('다시 시도'),
+                        ),
+                      ],
+                    ),
+                  )
+                : GridView.builder(
+                    padding: const EdgeInsets.all(16),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      childAspectRatio: 0.8,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                    ),
+                    itemCount: _data.artists.length + (_data.hasMoreData ? 1 : 0),
+                    itemBuilder: (context, index) {
+                      if (index == _data.artists.length) {
+                        // 로딩 인디케이터
+                        return _data.isLoadingMore
+                            ? const Center(
+                                child: CircularProgressIndicator(
+                                  color: Color(0xFFE6C767),
+                                ),
+                              )
+                            : const SizedBox.shrink();
+                      }
+                      
+                      // 스크롤이 끝에 가까우면 더 많은 데이터 로드
+                      if (index == _data.artists.length - 1 && _data.hasMoreData && !_data.isLoadingMore) {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          _data.loadMoreArtists().then((_) {
+                            if (mounted) setState(() {});
+                          });
+                        });
+                      }
+                      
+                      return _buildArtistCard(_data.artists[index]);
+                    },
                   ),
-                ),
-              )
-            // 아티스트 그리드
-            else
-              GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 0.8,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                ),
-                itemCount: _data.artists.length,
-                itemBuilder: (context, index) {
-                  return _buildArtistCard(_data.artists[index]);
-                },
-              ),
-          ],
-        ),
       ),
     );
   }
@@ -198,11 +208,14 @@ class _ArtistsScreenState extends State<ArtistsScreen> {
     
     return GestureDetector(
       onTap: () {
-        // 아티스트 상세 페이지로 이동
+        // 아티스트 상세 페이지로 이동 (ID와 이름 모두 전달)
         Navigator.pushNamed(
           context,
           '/artist-detail',
-          arguments: artistName,
+          arguments: {
+            'artistName': artistName,
+            'artistId': artist['id'],
+          },
         );
       },
       child: Container(
@@ -255,7 +268,7 @@ class _ArtistsScreenState extends State<ArtistsScreen> {
             
             // 팬 수
             Text(
-              '$fanCount 팬',
+              '$fanCount Fans',
               style: const TextStyle(
                 color: Colors.grey,
                 fontSize: 12,
@@ -263,24 +276,6 @@ class _ArtistsScreenState extends State<ArtistsScreen> {
               ),
             ),
             
-            const SizedBox(height: 8),
-            
-            // 아티스트 소개 (간단 버전)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              child: Text(
-                _getArtistShortDescription(artistName),
-                style: const TextStyle(
-                  color: Colors.white70,
-                  fontSize: 10,
-                  fontFamily: 'Raleway',
-                  height: 1.2,
-                ),
-                textAlign: TextAlign.center,
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
           ],
         ),
       ),
