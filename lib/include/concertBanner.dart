@@ -190,10 +190,8 @@ class _ConcertBannerState extends State<ConcertBanner> {
                             onTap: () {
                               Navigator.pushNamed(
                                 context,
-                                '/concert-detail',
-                                arguments: {
-                                  'concert': concert,
-                                },
+                                '/artist-detail',
+                                arguments: concert['artist_name_en'] ?? '',
                               );
                             },
                             child: Center(

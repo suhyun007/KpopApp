@@ -170,7 +170,7 @@ class _SearchScreenState extends State<SearchScreen> {
           ElevatedButton.icon(
             onPressed: _fetchAllArtists,
             icon: const Icon(Icons.refresh, size: 18),
-            label: const Text('다시 시도'),
+            label: const Text('Try Again'),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red[600],
               foregroundColor: Colors.white,

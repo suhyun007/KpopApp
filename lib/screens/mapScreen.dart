@@ -44,19 +44,19 @@ class _MapScreenState extends State<MapScreen> {
           });
         } else {
           setState(() {
-            _errorMessage = data['error'] ?? '콘서트 정보를 불러올 수 없습니다.';
+            _errorMessage = '문제가 발생했습니다. 앱을 다시 실행해주세요.';
             _isLoading = false;
           });
         }
       } else {
         setState(() {
-          _errorMessage = '서버 오류가 발생했습니다.';
+          _errorMessage = '일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
           _isLoading = false;
         });
       }
     } catch (e) {
       setState(() {
-        _errorMessage = '네트워크 오류가 발생했습니다.';
+        _errorMessage = '네트워크 상태를 확인해주세요.';
         _isLoading = false;
       });
     }
@@ -93,21 +93,25 @@ class _MapScreenState extends State<MapScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: const Text(
-          'Concert Map',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
+          title: Row(
+            children: [
+              const Text(
+                'Concert Map',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 21,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.refresh, color: Colors.white),
+                onPressed: _fetchAllConcerts,
+                padding: EdgeInsets.only(top:2),
+                constraints: const BoxConstraints(),
+              ),
+            ],
           ),
-        ),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh, color: Colors.white),
-            onPressed: _fetchAllConcerts,
-          ),
-        ],
+          centerTitle: false,
       ),
       body: _isLoading
           ? const Center(
@@ -140,11 +144,11 @@ class _MapScreenState extends State<MapScreen> {
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 15),
           ElevatedButton.icon(
             onPressed: _fetchAllConcerts,
             icon: const Icon(Icons.refresh, size: 18),
-            label: const Text('다시 시도'),
+            label: const Text('Try Again'),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red[600],
               foregroundColor: Colors.white,
@@ -181,7 +185,7 @@ class _MapScreenState extends State<MapScreen> {
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.all(15),
+      padding: const EdgeInsets.only(top: 0, left: 15, right: 15, bottom: 15),
       itemCount: _groupedConcerts.length,
       itemBuilder: (context, index) {
         final locationKey = _groupedConcerts.keys.elementAt(index);
@@ -198,46 +202,35 @@ class _MapScreenState extends State<MapScreen> {
     final city = parts.length > 1 ? parts[1] : '';
     
     return Container(
-      margin: const EdgeInsets.only(bottom: 20),
-      decoration: BoxDecoration(
-        color: Colors.grey[900],
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(
-          color: const Color(0xFFE6C767),
-          width: 1,
-        ),
-      ),
+      margin: const EdgeInsets.only(bottom: 15),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 지역 헤더
+          // 지역 헤더 - 골드 색상
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.all(15),
-            margin: const EdgeInsets.only(bottom: 15),
+            padding: const EdgeInsets.all(16),
+            margin: const EdgeInsets.only(bottom: 4),
             decoration: BoxDecoration(
-              color: const Color(0xFFE6C767).withOpacity(0.1),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(15),
-                topRight: Radius.circular(15),
-              ),
+              color: const Color(0xFFE6C767),
+              borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
               children: [
-                Icon(
+                /*Icon(
                   Icons.location_on,
-                  color: const Color(0xFFE6C767),
-                  size: 24,
-                ),
-                const SizedBox(width: 8),
+                  color: Colors.grey[800],
+                  size: 20,
+                ),*/
+                const SizedBox(width: 5),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         city.isNotEmpty ? city : country,
-                        style: const TextStyle(
-                          color: Color(0xFFE6C767),
+                        style: TextStyle(
+                          color: Colors.grey[900],
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
@@ -245,8 +238,8 @@ class _MapScreenState extends State<MapScreen> {
                       if (city.isNotEmpty)
                         Text(
                           country,
-                          style: const TextStyle(
-                            color: Colors.grey,
+                          style: TextStyle(
+                            color: Colors.grey[900],
                             fontSize: 14,
                           ),
                         ),
@@ -254,17 +247,20 @@ class _MapScreenState extends State<MapScreen> {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  width: 24,
+                  height: 24,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFE6C767),
-                    borderRadius: BorderRadius.circular(12),
+                    color: Colors.grey[600],
+                    shape: BoxShape.circle,
                   ),
-                  child: Text(
-                    '${concerts.length}',
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
+                  child: Center(
+                    child: Text(
+                      '${concerts.length}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
@@ -273,13 +269,17 @@ class _MapScreenState extends State<MapScreen> {
           ),
           
           // 콘서트 목록
-          ...concerts.map((concert) => _buildConcertItem(concert)).toList(),
+          ...concerts.asMap().entries.map((entry) {
+            final index = entry.key;
+            final concert = entry.value;
+            return _buildConcertItem(concert, isFirst: index == 0);
+          }).toList(),
         ],
       ),
     );
   }
 
-  Widget _buildConcertItem(Map<String, dynamic> concert) {
+  Widget _buildConcertItem(Map<String, dynamic> concert, {bool isFirst = false}) {
     // artists 객체가 중첩되어 있을 수 있으므로 안전하게 처리
     String artistName = '';
     if (concert['artists'] != null && concert['artists'] is Map) {
@@ -303,14 +303,23 @@ class _MapScreenState extends State<MapScreen> {
         );
       },
       child: Container(
-        margin: const EdgeInsets.only(left: 15, right: 15, bottom: 15),
-        padding: const EdgeInsets.all(15),
+        margin: const EdgeInsets.only(left: 0, right: 0, bottom: 0),
+        padding: const EdgeInsets.only(top: 15, left: 20, right: 15, bottom: 15),
         decoration: BoxDecoration(
-          color: Colors.grey[800],
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: Colors.grey[600]!,
-            width: 1,
+          color: Colors.white,
+          borderRadius: isFirst 
+            ? const BorderRadius.only(
+                topLeft: Radius.circular(12),
+                topRight: Radius.circular(12),
+                bottomLeft: Radius.circular(0),
+                bottomRight: Radius.circular(0),
+              )
+            : null,
+          border: const Border(
+            bottom: BorderSide(
+              color: Color(0xFFC3C3C3),
+              width: 1,
+            ),
           ),
         ),
         child: Column(
@@ -320,7 +329,7 @@ class _MapScreenState extends State<MapScreen> {
             Text(
               artistName,
               style: const TextStyle(
-                color: Color(0xFFE6C767),
+                color: Colors.black,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
@@ -332,16 +341,16 @@ class _MapScreenState extends State<MapScreen> {
               children: [
                 Icon(
                   Icons.place,
-                  color: Colors.grey[400],
-                  size: 16,
+                  color: Colors.grey[600],
+                  size: 17,
                 ),
                 const SizedBox(width: 4),
                 Expanded(
                   child: Text(
                     venueName,
                     style: TextStyle(
-                      color: Colors.grey[300],
-                      fontSize: 14,
+                      color: Colors.grey[800],
+                      fontSize: 15,
                     ),
                   ),
                 ),
@@ -349,32 +358,29 @@ class _MapScreenState extends State<MapScreen> {
             ),
             const SizedBox(height: 4),
             
-            // 날짜
+            // 날짜와 화살표
             Row(
               children: [
+                const SizedBox(width: 2),
                 Icon(
                   Icons.calendar_today,
-                  color: Colors.grey[400],
-                  size: 16,
+                  color: Colors.grey[800],
+                  size: 14,
                 ),
-                const SizedBox(width: 4),
-                Text(
-                  _formatDateRange(startDate, endDate),
-                  style: TextStyle(
-                    color: Colors.grey[300],
-                    fontSize: 14,
+                const SizedBox(width: 5),
+                Expanded(
+                  child: Text(
+                    _formatDateRange(startDate, endDate),
+                    style: const TextStyle(
+                      color: Color(0xFFB8860B),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
-              ],
-            ),
-            
-            // 클릭 힌트
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
                 Icon(
                   Icons.arrow_forward_ios,
-                  color: Colors.grey[500],
+                  color: Colors.grey[600],
                   size: 12,
                 ),
               ],

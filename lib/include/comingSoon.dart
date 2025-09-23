@@ -33,15 +33,15 @@ class ComingSoonData {
           isLoading = false;
           hasLoaded = true; // 로드 완료 표시
         } else {
-          errorMessage = data['error'] ?? '데이터를 불러올 수 없습니다.';
+          errorMessage = '문제가 발생했습니다. 앱을 다시 실행해주세요.';
           isLoading = false;
         }
       } else {
-        errorMessage = '서버 오류가 발생했습니다.';
+        errorMessage = '일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
         isLoading = false;
       }
     } catch (e) {
-      errorMessage = '네트워크 오류가 발생했습니다.';
+      errorMessage = '네트워크 상태를 확인해주세요.';
       isLoading = false;
     }
   }
@@ -107,13 +107,13 @@ class _ComingSoonState extends State<ComingSoon> {
                               _data.errorMessage!,
                               style: const TextStyle(color: Colors.white70),
                             ),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: 15),
                             ElevatedButton(
                               onPressed: () async {
                                 await _data.fetchConcerts();
                                 if (mounted) setState(() {});
                               },
-                              child: const Text('다시 시도'),
+                              child: const Text('Try Again'),
                             ),
                           ],
                         ),

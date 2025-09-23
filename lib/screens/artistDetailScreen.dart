@@ -222,7 +222,7 @@ class _ArtistDetailScreenState extends State<ArtistDetailScreen> {
               ),
               const SizedBox(height: 8),
               Text(
-                '네트워크 연결을 확인하고 다시 시도해주세요.',
+                '네트워크 연결을 확인하고 Try Again해주세요.',
                 style: TextStyle(
                   color: Colors.grey[400],
                   fontSize: 14,
@@ -233,7 +233,7 @@ class _ArtistDetailScreenState extends State<ArtistDetailScreen> {
               ElevatedButton.icon(
                 onPressed: _fetchArtistDetail,
                 icon: const Icon(Icons.refresh, size: 18),
-                label: const Text('다시 시도'),
+                label: const Text('Try Again'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red[600],
                   foregroundColor: Colors.white,
@@ -506,7 +506,7 @@ class _ArtistDetailScreenState extends State<ArtistDetailScreen> {
             ElevatedButton.icon(
               onPressed: _fetchConcerts,
               icon: const Icon(Icons.refresh, size: 16),
-              label: const Text('다시 시도'),
+              label: const Text('Try Again'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red[600],
                 foregroundColor: Colors.white,

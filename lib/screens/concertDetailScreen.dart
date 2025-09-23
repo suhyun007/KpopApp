@@ -37,7 +37,7 @@ class _ConcertDetailScreenState extends State<ConcertDetailScreen> {
     try {
       final concertId = widget.concert['id'];
       final response = await http.get(
-        Uri.parse('${ApiConfig.concerts}/$concertId'),
+        Uri.parse(ApiConfig.getConcertDetailById(concertId)),
         headers: {'Content-Type': 'application/json'},
       );
 
@@ -52,19 +52,19 @@ class _ConcertDetailScreenState extends State<ConcertDetailScreen> {
           _fetchArtistConcerts();
         } else {
           setState(() {
-            _errorMessage = data['error'] ?? '콘서트 정보를 불러올 수 없습니다.';
+            _errorMessage = '문제가 발생했습니다. 앱을 다시 실행해주세요.';
             _isLoading = false;
           });
         }
       } else {
         setState(() {
-          _errorMessage = '서버 오류가 발생했습니다.';
+          _errorMessage = '일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
           _isLoading = false;
         });
       }
     } catch (e) {
       setState(() {
-        _errorMessage = '네트워크 오류가 발생했습니다.';
+        _errorMessage = '네트워크 상태를 확인해주세요.';
         _isLoading = false;
       });
     }
@@ -160,11 +160,11 @@ class _ConcertDetailScreenState extends State<ConcertDetailScreen> {
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 15),
           ElevatedButton.icon(
             onPressed: _fetchConcertDetail,
             icon: const Icon(Icons.refresh, size: 18),
-            label: const Text('다시 시도'),
+            label: const Text('Try Again'),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red[600],
               foregroundColor: Colors.white,
@@ -189,30 +189,14 @@ class _ConcertDetailScreenState extends State<ConcertDetailScreen> {
         children: [
           // 아티스트 정보 카드
           _buildArtistCard(artist),
-          const SizedBox(height: 20),
+          const SizedBox(height: 12),
           
           // 콘서트 기본 정보
-          _buildConcertInfoCard(concert),
-          const SizedBox(height: 20),
-          
-          // 장소 정보
-          _buildVenueCard(concert),
-          const SizedBox(height: 20),
-          
-          // 날짜 및 시간 정보
-          _buildDateTimeCard(concert),
-          const SizedBox(height: 20),
-          
-          // 티켓 정보
-          if (concert['ticket_price'] != null && concert['ticket_price'].toString().isNotEmpty)
-            _buildTicketCard(concert),
-          
-          // 설명
-          if (concert['description'] != null && concert['description'].toString().isNotEmpty)
-            _buildDescriptionCard(concert),
+          // 통합된 콘서트 상세 정보
+          _buildUnifiedConcertDetailsCard(concert),
           
           // 해당 아티스트의 모든 콘서트 일정
-          const SizedBox(height: 20),
+          const SizedBox(height: 12),
           _buildArtistConcertsSection(),
         ],
       ),
@@ -222,7 +206,7 @@ class _ConcertDetailScreenState extends State<ConcertDetailScreen> {
   Widget _buildArtistCard(Map<String, dynamic> artist) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           colors: [Color(0xFFE6C767), Color(0xFFD4B85A)],
@@ -237,7 +221,7 @@ class _ConcertDetailScreenState extends State<ConcertDetailScreen> {
             artist['artist_name_en'] ?? '',
             style: const TextStyle(
               color: Colors.black,
-              fontSize: 24,
+              fontSize: 22,
               fontWeight: FontWeight.bold,
             ),
             textAlign: TextAlign.center,
@@ -269,225 +253,9 @@ class _ConcertDetailScreenState extends State<ConcertDetailScreen> {
     );
   }
 
-  Widget _buildConcertInfoCard(Map<String, dynamic> concert) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.grey[900],
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: const Color(0xFFE6C767),
-          width: 1,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                Icons.event,
-                color: const Color(0xFFE6C767),
-                size: 24,
-              ),
-              const SizedBox(width: 8),
-              const Text(
-                'Concert Information',
-                style: TextStyle(
-                  color: Color(0xFFE6C767),
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          _buildInfoRow('Type', concert['concert_type'] ?? 'N/A'),
-          _buildInfoRow('Status', concert['is_active'] == true ? 'Active' : 'Inactive'),
-          if (concert['memo'] != null && concert['memo'].toString().isNotEmpty)
-            _buildInfoRow('Memo', concert['memo']),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildVenueCard(Map<String, dynamic> concert) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.grey[900],
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: const Color(0xFFE6C767),
-          width: 1,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                Icons.place,
-                color: const Color(0xFFE6C767),
-                size: 24,
-              ),
-              const SizedBox(width: 8),
-              const Text(
-                'Venue Information',
-                style: TextStyle(
-                  color: Color(0xFFE6C767),
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          _buildInfoRow('Venue', concert['venue_name_en'] ?? 'N/A'),
-          if (concert['venue_name_kr'] != null && concert['venue_name_kr'].toString().isNotEmpty)
-            _buildInfoRow('장소', concert['venue_name_kr']),
-          _buildInfoRow('City', concert['city'] ?? 'N/A'),
-          _buildInfoRow('Country', concert['country'] ?? 'N/A'),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDateTimeCard(Map<String, dynamic> concert) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.grey[900],
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: const Color(0xFFE6C767),
-          width: 1,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                Icons.calendar_today,
-                color: const Color(0xFFE6C767),
-                size: 24,
-              ),
-              const SizedBox(width: 8),
-              const Text(
-                'Date & Time',
-                style: TextStyle(
-                  color: Color(0xFFE6C767),
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          _buildInfoRow('Start Date', _formatDate(concert['start_date'])),
-          if (concert['end_date'] != null && concert['end_date'] != concert['start_date'])
-            _buildInfoRow('End Date', _formatDate(concert['end_date'])),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTicketCard(Map<String, dynamic> concert) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.grey[900],
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: const Color(0xFFE6C767),
-          width: 1,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                Icons.confirmation_number,
-                color: const Color(0xFFE6C767),
-                size: 24,
-              ),
-              const SizedBox(width: 8),
-              const Text(
-                'Ticket Information',
-                style: TextStyle(
-                  color: Color(0xFFE6C767),
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          _buildInfoRow('Price', concert['ticket_price'] ?? 'N/A'),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDescriptionCard(Map<String, dynamic> concert) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.grey[900],
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: const Color(0xFFE6C767),
-          width: 1,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                Icons.description,
-                color: const Color(0xFFE6C767),
-                size: 24,
-              ),
-              const SizedBox(width: 8),
-              const Text(
-                'Description',
-                style: TextStyle(
-                  color: Color(0xFFE6C767),
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Text(
-            concert['description'],
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 14,
-              height: 1.5,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildInfoRow(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: 4),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -496,29 +264,115 @@ class _ConcertDetailScreenState extends State<ConcertDetailScreen> {
             child: Text(
               label,
               style: const TextStyle(
-                color: Colors.grey,
+                color: Colors.black87,
                 fontSize: 14,
               ),
-            ),
-          ),
-          const Text(
-            ': ',
-            style: TextStyle(
-              color: Colors.grey,
-              fontSize: 14,
             ),
           ),
           Expanded(
             child: Text(
               value,
               style: const TextStyle(
-                color: Colors.white,
+                color: Colors.black87,
                 fontSize: 14,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildUnifiedConcertDetailsCard(Map<String, dynamic> concert) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: const Color(0xFFE6C767),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 콘서트 정보 섹션
+          _buildSectionHeader(Icons.event, 'Concert Information'),
+          const SizedBox(height: 8),
+          _buildInfoRow('Type', concert['concert_type'] ?? 'N/A'),
+          _buildInfoRow('Status', concert['is_active'] == true ? 'Active' : 'Inactive'),
+          if (concert['memo'] != null && concert['memo'].toString().isNotEmpty)
+            _buildInfoRow('Memo', concert['memo']),
+          
+          const SizedBox(height: 12),
+          
+          // 장소 정보 섹션
+          _buildSectionHeader(Icons.place, 'Venue Information'),
+          const SizedBox(height: 8),
+          _buildInfoRow('Venue', concert['venue_name_en'] ?? 'N/A'),
+          if (concert['venue_name_kr'] != null && concert['venue_name_kr'].toString().isNotEmpty)
+            _buildInfoRow('장소', concert['venue_name_kr']),
+          _buildInfoRow('City', concert['city'] ?? 'N/A'),
+          _buildInfoRow('Country', concert['country'] ?? 'N/A'),
+          
+          const SizedBox(height: 12),
+          
+          // 날짜 및 시간 섹션
+          _buildSectionHeader(Icons.calendar_today, 'Date & Time'),
+          const SizedBox(height: 8),
+          _buildInfoRow('Start Date', concert['start_date'] ?? 'N/A'),
+          _buildInfoRow('End Date', concert['end_date'] ?? 'N/A'),
+          
+          // 티켓 정보 (있는 경우만)
+          if (concert['ticket_price'] != null && concert['ticket_price'].toString().isNotEmpty) ...[
+            const SizedBox(height: 12),
+            _buildSectionHeader(Icons.confirmation_number, 'Ticket Information'),
+            const SizedBox(height: 8),
+            _buildInfoRow('Price', concert['ticket_price']),
+          ],
+          
+          // 설명 (있는 경우만)
+          if (concert['description'] != null && concert['description'].toString().isNotEmpty) ...[
+            const SizedBox(height: 12),
+            _buildSectionHeader(Icons.description, 'Description'),
+            const SizedBox(height: 8),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.grey[100],
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                concert['description'],
+                style: const TextStyle(
+                  color: Colors.black87,
+                  fontSize: 14,
+                  height: 1.5,
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionHeader(IconData icon, String title) {
+    return Row(
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            color: Color(0xFFB8860B),
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
     );
   }
 

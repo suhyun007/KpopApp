@@ -70,6 +70,7 @@ class ApiConfig {
   
   // 아티스트별 콘서트 정보 조회 (이름으로)
   static String getConcertsByArtist(String artistName) => '$baseUrlForMobile/api/concerts?artist=$artistName';
+  static String getConcertDetailById(int concertId) => '$baseUrlForMobile/api/concerts/$concertId';
   
   // 환경 정보 출력 (디버깅용)
   static void printEnvironment() {

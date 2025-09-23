@@ -11,10 +11,19 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends State<SplashScreen> 
+  with SingleTickerProviderStateMixin{
+  late AnimationController _controller;
+  late Animation<double> _fadeAnimation;
+
   @override
   void initState() {
     super.initState();
+
+    //애니메이션 컨트롤러(2초 동안 실행)
+    _controller = AnimationController(vsync: this, duration: Duration(seconds: 2),);
+    _fadeAnimation = CurvedAnimation(parent: _controller, curve: Curves.easeIn,);
+    _controller.forward();  //시작할때 자동 실행
     _preloadData();
   }
 
@@ -41,32 +50,43 @@ class _SplashScreenState extends State<SplashScreen> {
     }
 
     // 최소 2초는 스플래시 화면 유지
-    await Future.delayed(const Duration(seconds: 2));
-
-    // 메인 화면으로 이동
-    if (mounted) {
+    await Future.delayed(const Duration(seconds: 2),(){
       Navigator.of(context).pushReplacementNamed('/main');
-    }
+    });
+
+    //홈으로 이동
+    /*Future.delayed(Duration(seconds: 3), (){
+      Navigator.pushReplacementNamed(context, '/main');
+    });*/
+  }
+
+  @override
+  void dispose(){
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: const BoxDecoration(
-          color: Colors.black,
+      body: Center(
+        child: FadeTransition(
+          opacity: _fadeAnimation,
+          child: Image.asset('image/icons/LaunchImage.png', width: 165, height: 165,),
         ),
-        child: const Center(
-          child: Image(
-            image: AssetImage('image/icons/LaunchImage.png'),
-            width: 150,
-            height: 150,
-            fit: BoxFit.contain,
-          ),
-        ),
+        
+        /*child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset('image/icons/LaunchImage.png', width: 150, height: 150,),
+            SizedBox(height: 30),
+            CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              strokeWidth: 3,
+            ),
+          ],  
+        ),*/
       ),
     );
   }
