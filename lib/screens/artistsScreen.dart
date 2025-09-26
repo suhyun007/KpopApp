@@ -1,3 +1,4 @@
+import '../l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -42,23 +43,24 @@ class ArtistsData {
           
           if (isRefresh) {
             artists = newArtists;
+            currentPage = 2; // 다음 페이지는 2
           } else {
             artists.addAll(newArtists);
+            currentPage++;
           }
           
-          currentPage++;
           hasMoreData = newArtists.length == limit;
           isLoading = false;
         } else {
-          errorMessage = data['error'] ?? '데이터를 불러올 수 없습니다.';
+          errorMessage = 'AppLocalizations.of(context)?.serverError ?? "일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요."';
           isLoading = false;
         }
       } else {
-        errorMessage = '서버 오류가 발생했습니다.';
+        errorMessage = 'AppLocalizations.of(context)?.serverError ?? "일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요."';
         isLoading = false;
       }
     } catch (e) {
-      errorMessage = '네트워크 오류가 발생했습니다.';
+      errorMessage = 'AppLocalizations.of(context)?.networkError ?? "네트워크 상태를 확인해주세요."';
       isLoading = false;
     }
   }
@@ -146,55 +148,62 @@ class _ArtistsScreenState extends State<ArtistsScreen> {
                       children: [
                         Text(
                           _data.errorMessage!,
-                          style: const TextStyle(
-                            color: Colors.red,
+                          style: TextStyle(
+                            color: Colors.grey[400],
                             fontSize: 14,
                           ),
                           textAlign: TextAlign.center,
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 15),
                         ElevatedButton(
                           onPressed: () async {
                             await _data.fetchArtists(isRefresh: true);
                             if (mounted) setState(() {});
                           },
-                          child: const Text('다시 시도'),
+                          child: const Text('Try Again'),
                         ),
                       ],
                     ),
                   )
-                : GridView.builder(
-                    padding: const EdgeInsets.all(16),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      childAspectRatio: 0.8,
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 16,
-                    ),
-                    itemCount: _data.artists.length + (_data.hasMoreData ? 1 : 0),
-                    itemBuilder: (context, index) {
-                      if (index == _data.artists.length) {
-                        // 로딩 인디케이터
-                        return _data.isLoadingMore
-                            ? const Center(
-                                child: CircularProgressIndicator(
-                                  color: Color(0xFFE6C767),
-                                ),
-                              )
-                            : const SizedBox.shrink();
-                      }
-                      
-                      // 스크롤이 끝에 가까우면 더 많은 데이터 로드
-                      if (index == _data.artists.length - 1 && _data.hasMoreData && !_data.isLoadingMore) {
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          _data.loadMoreArtists().then((_) {
-                            if (mounted) setState(() {});
-                          });
-                        });
-                      }
-                      
-                      return _buildArtistCard(_data.artists[index]);
-                    },
+                : Stack(
+                    children: [
+                      // 메인 GridView
+                      GridView.builder(
+                        padding: const EdgeInsets.all(16),
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          childAspectRatio: 0.8,
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 16,
+                        ),
+                        itemCount: _data.artists.length,
+                        itemBuilder: (context, index) {
+                          // 스크롤이 끝에 가까우면 더 많은 데이터 로드
+                          if (index == _data.artists.length - 1 && _data.hasMoreData && !_data.isLoadingMore) {
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              _data.loadMoreArtists().then((_) {
+                                if (mounted) setState(() {});
+                              });
+                              // isLoadingMore = true 설정 직후 setState 호출
+                              if (mounted) setState(() {});
+                            });
+                          }
+                          
+                          return _buildArtistCard(_data.artists[index]);
+                        },
+                      ),
+                      // 로딩 오버레이 - 맨 마지막에 배치하여 모든 위젯 위에 표시
+                      if (_data.isLoadingMore)
+                        Container(
+                          color: Colors.black.withOpacity(0.3), // 반투명 배경
+                          child: const Center(
+                            child: CircularProgressIndicator(
+                              color: Color(0xFFE6C767),
+                              strokeWidth: 3,
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
       ),
     );

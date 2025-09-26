@@ -1,3 +1,4 @@
+import '../l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -33,15 +34,15 @@ class ConcertBannerData {
           isLoading = false;
           hasLoaded = true; // 로드 완료 표시
         } else {
-          errorMessage = data['error'] ?? '데이터를 불러올 수 없습니다.';
+          errorMessage = 'AppLocalizations.of(context)?.serverError ?? "일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요."';
           isLoading = false;
         }
       } else {
-        errorMessage = '서버 오류가 발생했습니다.';
+        errorMessage = 'AppLocalizations.of(context)?.serverError ?? "일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요."';
         isLoading = false;
       }
     } catch (e) {
-      errorMessage = '네트워크 오류가 발생했습니다.';
+      errorMessage = 'AppLocalizations.of(context)?.networkError ?? "네트워크 상태를 확인해주세요."';
       isLoading = false;
     }
   }
@@ -162,7 +163,7 @@ class _ConcertBannerState extends State<ConcertBanner> {
                             await _data.fetchConcerts();
                             if (mounted) setState(() {});
                           },
-                          child: const Text('다시 시도'),
+                          child: const Text('Try Again'),
                         ),
                       ],
                     ),

@@ -70,7 +70,11 @@ class ApiConfig {
   
   // 아티스트별 콘서트 정보 조회 (이름으로)
   static String getConcertsByArtist(String artistName) => '$baseUrlForMobile/api/concerts?artist=$artistName';
-  static String getConcertDetailById(int concertId) => '$baseUrlForMobile/api/concerts/$concertId';
+  static String getConcertDetailById(int concertId) => '$baseUrlForMobile/api/concerts?id=$concertId';
+  
+  // Supabase 설정
+  static String get supabaseUrl => const String.fromEnvironment('SUPABASE_URL', defaultValue: 'https://dxgsejmqfywvskgvtevm.supabase.co');
+  static String get supabaseAnonKey => const String.fromEnvironment('SUPABASE_ANON_KEY', defaultValue: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR4Z3Nlam1xZnl3dnNrZ3Z0ZXZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUwMDQ3MzMsImV4cCI6MjA3MDU4MDczM30.IXMQF3HyTgFXaHNeCXpkeX6wOSUiLWIiL3lpkdMEDLY');
   
   // 환경 정보 출력 (디버깅용)
   static void printEnvironment() {

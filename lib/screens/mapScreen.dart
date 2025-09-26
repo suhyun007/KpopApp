@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../config/api_config.dart';
+import '../l10n/app_localizations.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -44,19 +45,19 @@ class _MapScreenState extends State<MapScreen> {
           });
         } else {
           setState(() {
-            _errorMessage = '문제가 발생했습니다. 앱을 다시 실행해주세요.';
+            _errorMessage = AppLocalizations.of(context)?.unknownError ?? "문제가 발생했습니다. 앱을 다시 실행해주세요.";
             _isLoading = false;
           });
         }
       } else {
         setState(() {
-          _errorMessage = '일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
+          _errorMessage = AppLocalizations.of(context)?.serverError ?? "일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요.";
           _isLoading = false;
         });
       }
     } catch (e) {
       setState(() {
-        _errorMessage = '네트워크 상태를 확인해주세요.';
+        _errorMessage = AppLocalizations.of(context)?.networkError ?? "네트워크 상태를 확인해주세요.";
         _isLoading = false;
       });
     }
@@ -90,7 +91,7 @@ class _MapScreenState extends State<MapScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: AppBar(
+      appBar: _errorMessage == null ? AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
           title: Row(
@@ -112,7 +113,7 @@ class _MapScreenState extends State<MapScreen> {
             ],
           ),
           centerTitle: false,
-      ),
+      ) : null,
       body: _isLoading
           ? const Center(
               child: CircularProgressIndicator(
@@ -130,30 +131,18 @@ class _MapScreenState extends State<MapScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.error_outline,
-            color: Colors.red[400],
-            size: 64,
-          ),
-          const SizedBox(height: 16),
           Text(
             _errorMessage!,
             style: TextStyle(
-              color: Colors.red[300],
-              fontSize: 16,
+              color: Colors.grey[400],
+              fontSize: 14,
             ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 15),
-          ElevatedButton.icon(
+          ElevatedButton(
             onPressed: _fetchAllConcerts,
-            icon: const Icon(Icons.refresh, size: 18),
-            label: const Text('Try Again'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red[600],
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            ),
+            child: const Text('Try Again'),
           ),
         ],
       ),

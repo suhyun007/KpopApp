@@ -1,3 +1,4 @@
+import '../l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -52,19 +53,19 @@ class _ConcertDetailScreenState extends State<ConcertDetailScreen> {
           _fetchArtistConcerts();
         } else {
           setState(() {
-            _errorMessage = '문제가 발생했습니다. 앱을 다시 실행해주세요.';
+            _errorMessage = 'AppLocalizations.of(context)?.unknownError ?? "문제가 발생했습니다. 앱을 다시 실행해주세요."';
             _isLoading = false;
           });
         }
       } else {
         setState(() {
-          _errorMessage = '일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
+          _errorMessage = 'AppLocalizations.of(context)?.serverError ?? "일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요."';
           _isLoading = false;
         });
       }
     } catch (e) {
       setState(() {
-        _errorMessage = '네트워크 상태를 확인해주세요.';
+        _errorMessage = 'AppLocalizations.of(context)?.networkError ?? "네트워크 상태를 확인해주세요."';
         _isLoading = false;
       });
     }

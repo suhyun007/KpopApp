@@ -1,3 +1,4 @@
+import '../l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -14,10 +15,10 @@ class PopularListData {
   String? errorMessage;
   bool hasLoaded = false; // 이미 로드되었는지 확인
 
-  Future<void> fetchPopularArtists() async {
-    if (hasLoaded && artists.isNotEmpty) {
+  Future<void> fetchPopularArtists({bool isRefresh = false}) async {
+    if (hasLoaded && artists.isNotEmpty && !isRefresh) {
       isLoading = false;
-      return; // 이미 로드된 데이터가 있으면 API 호출하지 않음
+      return; // 이미 로드된 데이터가 있으면 API 호출하지 않음 (새로고침 제외)
     }
 
     try {
@@ -37,15 +38,15 @@ class PopularListData {
           isLoading = false;
           hasLoaded = true; // 로드 완료 표시
         } else {
-          errorMessage = data['error'] ?? '데이터를 가져오는데 실패했습니다.';
+          errorMessage = 'AppLocalizations.of(context)?.serverError ?? "일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요."';
           isLoading = false;
         }
       } else {
-        errorMessage = '서버 오류: ${response.statusCode}';
+        errorMessage = 'AppLocalizations.of(context)?.serverError ?? "일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요."';
         isLoading = false;
       }
     } catch (e) {
-      errorMessage = '네트워크 오류: $e';
+      errorMessage = 'AppLocalizations.of(context)?.networkError ?? "네트워크 상태를 확인해주세요."';
       isLoading = false;
     }
   }
@@ -114,19 +115,19 @@ class _PopularListState extends State<PopularList> {
                           children: [
                             Text(
                               _data.errorMessage!,
-                              style: const TextStyle(
-                                color: Colors.red,
+                              style: TextStyle(
+                                color: Colors.grey[400],
                                 fontSize: 14,
                               ),
                               textAlign: TextAlign.center,
                             ),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: 15),
                             ElevatedButton(
                               onPressed: () async {
-                                await _data.fetchPopularArtists();
+                                await _data.fetchPopularArtists(isRefresh: true);
                                 if (mounted) setState(() {});
                               },
-                              child: const Text('다시 시도'),
+                              child: const Text('Try Again'),
                             ),
                           ],
                         ),
