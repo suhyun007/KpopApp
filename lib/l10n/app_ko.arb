@@ -1,0 +1,230 @@
+{
+  "@@locale": "ko",
+  "appTitle": "케이팝 콜",
+  "@appTitle": {
+    "description": "애플리케이션 제목"
+  },
+  
+  "home": "홈",
+  "@home": {
+    "description": "홈 탭 라벨"
+  },
+  "artists": "아티스트",
+  "@artists": {
+    "description": "아티스트 탭 라벨"
+  },
+  "map": "지도",
+  "@map": {
+    "description": "지도 탭 라벨"
+  },
+  "myPage": "마이페이지",
+  "@myPage": {
+    "description": "마이페이지 탭 라벨"
+  },
+  
+  "popularArtists": "인기 아티스트",
+  "@popularArtists": {
+    "description": "인기 아티스트 섹션 제목"
+  },
+  "comingSoon": "커밍순",
+  "@comingSoon": {
+    "description": "커밍순 콘서트 섹션 제목"
+  },
+  "concertMap": "콘서트 지도",
+  "@concertMap": {
+    "description": "콘서트 지도 화면 제목"
+  },
+  
+  "searchArtists": "아티스트를 검색해주세요.",
+  "@searchArtists": {
+    "description": "아티스트 검색 플레이스홀더"
+  },
+  "searchArtistsOrConcerts": "아티스트 또는 콘서트를 검색해주세요.",
+  "@searchArtistsOrConcerts": {
+    "description": "아티스트 또는 콘서트 검색 플레이스홀더"
+  },
+  
+  "aboutArtist": "아티스트 소개",
+  "@aboutArtist": {
+    "description": "아티스트 소개 섹션 제목"
+  },
+  "fans": "팬",
+  "@fans": {
+    "description": "팬 수 라벨"
+  },
+  "agency": "소속사",
+  "@agency": {
+    "description": "소속사 라벨"
+  },
+  "more": "더보기",
+  "@more": {
+    "description": "더 보기 텍스트 버튼"
+  },
+  "hide": "숨기기",
+  "@hide": {
+    "description": "덜 보기 텍스트 버튼"
+  },
+  
+  "concertInformation": "콘서트 정보",
+  "@concertInformation": {
+    "description": "콘서트 정보 섹션 제목"
+  },
+  "venueInformation": "장소 정보",
+  "@venueInformation": {
+    "description": "장소 정보 섹션 제목"
+  },
+  "dateTime": "날짜 및 시간",
+  "@dateTime": {
+    "description": "날짜 및 시간 섹션 제목"
+  },
+  "ticketInformation": "티켓 정보",
+  "@ticketInformation": {
+    "description": "티켓 정보 섹션 제목"
+  },
+  "description": "설명",
+  "@description": {
+    "description": "설명 섹션 제목"
+  },
+  "allConcerts": "모든 콘서트",
+  "@allConcerts": {
+    "description": "모든 콘서트 섹션 제목"
+  },
+  
+  "loginSignUp": "로그인 / 회원가입",
+  "@loginSignUp": {
+    "description": "로그인 회원가입 버튼 텍스트"
+  },
+  "continueWithGoogle": "Google로 계속하기",
+  "@continueWithGoogle": {
+    "description": "Google로 계속하기 버튼 텍스트"
+  },
+  "continueWithApple": "Apple로 계속하기",
+  "@continueWithApple": {
+    "description": "Apple로 계속하기 버튼 텍스트"
+  },
+  "logout": "로그아웃",
+  "@logout": {
+    "description": "로그아웃 버튼 텍스트"
+  },
+  
+  "notifications": "알림",
+  "@notifications": {
+    "description": "알림 섹션 제목"
+  },
+  "pushNotifications": "푸시 알림",
+  "@pushNotifications": {
+    "description": "푸시 알림 설정"
+  },
+  "emailNotifications": "이메일 알림",
+  "@emailNotifications": {
+    "description": "이메일 알림 설정"
+  },
+  
+  "appSettings": "앱 설정",
+  "@appSettings": {
+    "description": "앱 설정 섹션 제목"
+  },
+  "language": "언어",
+  "@language": {
+    "description": "언어 설정"
+  },
+  "theme": "테마",
+  "@theme": {
+    "description": "테마 설정"
+  },
+  "storage": "저장공간",
+  "@storage": {
+    "description": "저장공간 설정"
+  },
+  
+  "information": "정보",
+  "@information": {
+    "description": "정보 섹션 제목"
+  },
+  "aboutApp": "앱 정보",
+  "@aboutApp": {
+    "description": "앱 정보 메뉴 항목"
+  },
+  "helpSupport": "도움말 및 지원",
+  "@helpSupport": {
+    "description": "도움말 및 지원 메뉴 항목"
+  },
+  "privacyPolicy": "개인정보처리방침",
+  "@privacyPolicy": {
+    "description": "개인정보처리방침 메뉴 항목"
+  },
+  "termsOfService": "이용약관",
+  "@termsOfService": {
+    "description": "이용약관 메뉴 항목"
+  },
+  
+  "tryAgain": "다시 시도",
+  "@tryAgain": {
+    "description": "다시 시도 버튼 텍스트"
+  },
+  "networkError": "네트워크 상태를 확인해주세요.",
+  "@networkError": {
+    "description": "네트워크 오류 메시지"
+  },
+  "serverError": "일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
+  "@serverError": {
+    "description": "서버 오류 메시지"
+  },
+  "unknownError": "문제가 발생했습니다. 앱을 다시 실행해주세요.",
+  "@unknownError": {
+    "description": "알 수 없는 오류 메시지"
+  },
+  "noUpcomingConcerts": "예정된 콘서트가 없습니다",
+  "@noUpcomingConcerts": {
+    "description": "예정된 콘서트 없음 메시지"
+  },
+  "artistNotFound": "아티스트 정보를 찾을 수 없습니다",
+  "@artistNotFound": {
+    "description": "아티스트를 찾을 수 없음 메시지"
+  },
+  
+  "aboutKpopCall": "케이팝 콜 정보",
+  "@aboutKpopCall": {
+    "description": "앱 정보 다이얼로그 제목"
+  },
+  "version": "버전",
+  "@version": {
+    "description": "버전 라벨"
+  },
+  "aboutDescription": "케이팝 콜은 K-POP 콘서트 정보와 아티스트 업데이트를 위한 최고의 목적지입니다. 좋아하는 아티스트들과 연결을 유지하고 콘서트를 놓치지 마세요.",
+  "@aboutDescription": {
+    "description": "앱 정보 설명"
+  },
+  "features": "기능",
+  "@features": {
+    "description": "기능 섹션 제목"
+  },
+  "popularArtistsFeature": "인기 아티스트",
+  "@popularArtistsFeature": {
+    "description": "인기 아티스트 기능"
+  },
+  "concertInformationFeature": "콘서트 정보",
+  "@concertInformationFeature": {
+    "description": "콘서트 정보 기능"
+  },
+  "concertMapFeature": "콘서트 지도",
+  "@concertMapFeature": {
+    "description": "콘서트 지도 기능"
+  },
+  "notificationsFeature": "알림",
+  "@notificationsFeature": {
+    "description": "알림 기능"
+  },
+  "userProfileFeature": "사용자 프로필",
+  "@userProfileFeature": {
+    "description": "사용자 프로필 기능"
+  },
+  "close": "닫기",
+  "@close": {
+    "description": "닫기 버튼 텍스트"
+  },
+  "about": "소개",
+  "@about": {
+    "description": "소개 섹션 제목"
+  }
+}

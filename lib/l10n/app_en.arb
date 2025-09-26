@@ -1,0 +1,230 @@
+{
+  "@@locale": "en",
+  "appTitle": "K-POP Call",
+  "@appTitle": {
+    "description": "Application title"
+  },
+  
+  "home": "Home",
+  "@home": {
+    "description": "Home tab label"
+  },
+  "artists": "Artists",
+  "@artists": {
+    "description": "Artists tab label"
+  },
+  "map": "Map",
+  "@map": {
+    "description": "Map tab label"
+  },
+  "myPage": "My Page",
+  "@myPage": {
+    "description": "My page tab label"
+  },
+  
+  "popularArtists": "Popular Artists",
+  "@popularArtists": {
+    "description": "Popular artists section title"
+  },
+  "comingSoon": "Coming Soon",
+  "@comingSoon": {
+    "description": "Coming soon concerts section title"
+  },
+  "concertMap": "Concert Map",
+  "@concertMap": {
+    "description": "Concert map screen title"
+  },
+  
+  "searchArtists": "Search for artists",
+  "@searchArtists": {
+    "description": "Artist search placeholder"
+  },
+  "searchArtistsOrConcerts": "Search for artists or concerts",
+  "@searchArtistsOrConcerts": {
+    "description": "Artist or concert search placeholder"
+  },
+  
+  "aboutArtist": "About Artist",
+  "@aboutArtist": {
+    "description": "About artist section title"
+  },
+  "fans": "Fans",
+  "@fans": {
+    "description": "Fans count label"
+  },
+  "agency": "Agency",
+  "@agency": {
+    "description": "Agency label"
+  },
+  "more": "More",
+  "@more": {
+    "description": "More text button"
+  },
+  "hide": "Hide",
+  "@hide": {
+    "description": "Hide text button"
+  },
+  
+  "concertInformation": "Concert Information",
+  "@concertInformation": {
+    "description": "Concert information section title"
+  },
+  "venueInformation": "Venue Information",
+  "@venueInformation": {
+    "description": "Venue information section title"
+  },
+  "dateTime": "Date & Time",
+  "@dateTime": {
+    "description": "Date and time section title"
+  },
+  "ticketInformation": "Ticket Information",
+  "@ticketInformation": {
+    "description": "Ticket information section title"
+  },
+  "description": "Description",
+  "@description": {
+    "description": "Description section title"
+  },
+  "allConcerts": "All Concerts",
+  "@allConcerts": {
+    "description": "All concerts section title"
+  },
+  
+  "loginSignUp": "Login / Sign Up",
+  "@loginSignUp": {
+    "description": "Login sign up button text"
+  },
+  "continueWithGoogle": "Continue with Google",
+  "@continueWithGoogle": {
+    "description": "Continue with Google button text"
+  },
+  "continueWithApple": "Continue with Apple",
+  "@continueWithApple": {
+    "description": "Continue with Apple button text"
+  },
+  "logout": "Logout",
+  "@logout": {
+    "description": "Logout button text"
+  },
+  
+  "notifications": "Notifications",
+  "@notifications": {
+    "description": "Notifications section title"
+  },
+  "pushNotifications": "Push Notifications",
+  "@pushNotifications": {
+    "description": "Push notifications setting"
+  },
+  "emailNotifications": "Email Notifications",
+  "@emailNotifications": {
+    "description": "Email notifications setting"
+  },
+  
+  "appSettings": "App Settings",
+  "@appSettings": {
+    "description": "App settings section title"
+  },
+  "language": "Language",
+  "@language": {
+    "description": "Language setting"
+  },
+  "theme": "Theme",
+  "@theme": {
+    "description": "Theme setting"
+  },
+  "storage": "Storage",
+  "@storage": {
+    "description": "Storage setting"
+  },
+  
+  "information": "Information",
+  "@information": {
+    "description": "Information section title"
+  },
+  "aboutApp": "About App",
+  "@aboutApp": {
+    "description": "About app menu item"
+  },
+  "helpSupport": "Help & Support",
+  "@helpSupport": {
+    "description": "Help and support menu item"
+  },
+  "privacyPolicy": "Privacy Policy",
+  "@privacyPolicy": {
+    "description": "Privacy policy menu item"
+  },
+  "termsOfService": "Terms of Service",
+  "@termsOfService": {
+    "description": "Terms of service menu item"
+  },
+  
+  "tryAgain": "Try Again",
+  "@tryAgain": {
+    "description": "Try again button text"
+  },
+  "networkError": "Please check your network connection.",
+  "@networkError": {
+    "description": "Network error message"
+  },
+  "serverError": "A temporary error occurred. Please try again later.",
+  "@serverError": {
+    "description": "Server error message"
+  },
+  "unknownError": "An error occurred. Please restart the app.",
+  "@unknownError": {
+    "description": "Unknown error message"
+  },
+  "noUpcomingConcerts": "No upcoming concerts",
+  "@noUpcomingConcerts": {
+    "description": "No upcoming concerts message"
+  },
+  "artistNotFound": "Artist information not found",
+  "@artistNotFound": {
+    "description": "Artist not found message"
+  },
+  
+  "aboutKpopCall": "About K-POP Call",
+  "@aboutKpopCall": {
+    "description": "App info dialog title"
+  },
+  "version": "Version",
+  "@version": {
+    "description": "Version label"
+  },
+  "aboutDescription": "K-POP Call is your ultimate destination for K-POP concert information and artist updates. Stay connected with your favorite artists and never miss a concert again.",
+  "@aboutDescription": {
+    "description": "App info description"
+  },
+  "features": "Features",
+  "@features": {
+    "description": "Features section title"
+  },
+  "popularArtistsFeature": "Popular Artists",
+  "@popularArtistsFeature": {
+    "description": "Popular artists feature"
+  },
+  "concertInformationFeature": "Concert Information",
+  "@concertInformationFeature": {
+    "description": "Concert information feature"
+  },
+  "concertMapFeature": "Concert Map",
+  "@concertMapFeature": {
+    "description": "Concert map feature"
+  },
+  "notificationsFeature": "Notifications",
+  "@notificationsFeature": {
+    "description": "Notifications feature"
+  },
+  "userProfileFeature": "User Profile",
+  "@userProfileFeature": {
+    "description": "User profile feature"
+  },
+  "close": "Close",
+  "@close": {
+    "description": "Close button text"
+  },
+  "about": "About",
+  "@about": {
+    "description": "About section title"
+  }
+}
